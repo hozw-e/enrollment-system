@@ -1,0 +1,122 @@
+/* ── Layout ── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6fb;
+}
+
+.main {
+  margin-left: 68px;
+  flex: 1;
+  padding: 32px;
+  width: calc(100% - 68px);
+}
+
+.content {
+  width: 100%;
+}
+
+/* ── Info Card ── */
+.infoCard {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border: 2px solid #4a90d9;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  width: fit-content;
+}
+
+.photoWrapper {
+  width: 160px;
+  min-height: 140px;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid #4a90d9;
+  flex-shrink: 0;
+}
+
+.photoPlaceholder {
+  font-size: 5rem;
+  color: #aaa;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Info Table ── */
+.infoTable {
+  border-collapse: collapse;
+}
+
+.infoTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.infoTable tr:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  background: #f5c842;
+  color: #1a1a1a;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-right: 1px solid #ddd;
+  white-space: nowrap;
+  width: 140px;
+}
+
+.infoValue {
+  padding: 10px 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  min-width: 500px;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.tab {
+  padding: 8px 20px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab:hover {
+  background: #e0e0e0;
+}
+
+.activeTab {
+  background: #f5c842;
+  color: #1a1a1a;
+  font-weight: 600;
+  border-color: #f5c842;
+}
+
+/* ── Card ── */
+.card {
+  border: 2px solid #f5c842;
+  border-radius: 0 6px 6px 6px;
+  background: #fff;
+  min-height: 420px;
+  width: 100%;
+}

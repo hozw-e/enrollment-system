@@ -1,0 +1,63 @@
+.sidebar {
+  width: 68px;
+  background: #1a2150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+}
+
+.navIcons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.navBtn {
+  background: none;
+  border: none;
+  color: #8892c8;
+  font-size: 1.6rem;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.navBtn:hover {
+  background: #2d3a7a;
+  color: #fff;
+}
+
+.navBtn.active {
+  background: #f5c842;
+  color: #1a2150;
+}
+
+.logoutBtn {
+  background: #c0392b;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.logoutBtn:hover {
+  background: #e74c3c;
+}

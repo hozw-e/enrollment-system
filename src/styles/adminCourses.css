@@ -1,0 +1,206 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6fb;
+}
+
+.main {
+  margin-left: 68px;
+  flex: 1;
+  padding: 32px;
+  width: calc(100% - 68px);
+}
+
+.content {
+  width: 100%;
+}
+
+.pageHeader {
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a2150;
+  margin-bottom: 8px;
+}
+
+.divider {
+  border: none;
+  border-top: 1.5px solid #ddd;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.tab {
+  padding: 8px 20px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab:hover {
+  background: #e0e0e0;
+}
+
+.activeTab {
+  background: #f5c842;
+  color: #1a1a1a;
+  font-weight: 600;
+  border-color: #f5c842;
+}
+
+/* ── Card ── */
+.card {
+  border: 2px solid #f5c842;
+  border-radius: 0 6px 6px 6px;
+  background: #fff;
+  width: 100%;
+  padding: 16px;
+}
+
+/* ── Search & Filter ── */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.searchWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fff;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.searchBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #c8a84b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.filterBtn:hover {
+  background: #b8982e;
+}
+
+/* ── Table ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #ddd;
+  color: #333;
+  font-weight: 700;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+}
+
+.table tbody tr:hover {
+  background: #fffde7;
+  cursor: pointer;
+}
+
+.emptyRow td {
+  text-align: center;
+  color: #aaa;
+  padding: 40px;
+}
+
+/* ── Modal ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background: #fff;
+  border: 2px solid #f5c842;
+  border-radius: 10px;
+  padding: 24px;
+  min-width: 300px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.modalTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a2150;
+  margin-bottom: 16px;
+}
+
+.modalTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.modalTable td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+}
+
+.modalLabel {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+  width: 130px;
+}

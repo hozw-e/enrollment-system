@@ -1,0 +1,174 @@
+/* ── Page ── */
+
+.loginPage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* ── Blobs ── */
+.loginBlob {
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* ── Left Side ── */
+.loginBlobLeft1 {
+  width: 400px;
+  height: 400px;
+  bottom: 100px;
+  left: -180px;
+}
+
+.loginBlobLeft2 {
+  width: 400px;
+  height: 400px;
+  bottom: -150px;
+  left: -120px;
+}
+
+.loginBlobLeft3 {
+  width: 300px;
+  height: 300px;
+  bottom: -200px;
+  left:150px;
+}
+
+/* ── Right Side ── */
+.loginBlobRight1 {
+  width: 350px;
+  height: 350px;
+  bottom: 100px;
+  right: -180px;
+}
+
+.loginBlobRight2 {
+  width: 400px;
+  height: 400px;
+  bottom: -150px;
+  right: -100px;
+}
+
+.loginBlobRight3 {
+  width: 150px;
+  height: 150px;
+  bottom: -80px;
+  right: 230px;
+}
+
+/* ── Card ── */
+.loginCard {
+  position: relative;
+  z-index: 10;
+  background: #ffffff;
+  border: 1.5px solid #f5c842;
+  border-radius: 16px;
+  padding: 32px 36px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Logo ── */
+.loginLogo {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+/* ── Title ── */
+.loginTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+/* ── Form ── */
+.loginForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Input ── */
+.loginInputWrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #d0d4f7;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #fff;
+  gap: 8px;
+}
+
+.loginInputIcon {
+  font-size: 1rem;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.loginInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 0;
+  font-size: 0.9rem;
+  color: #333;
+  background: transparent;
+  font-family: inherit;
+}
+
+.loginTogglePassword {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+/* ── Button ── */
+.loginBtn {
+  padding: 13px;
+  background: #2d3a9e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+  font-family: inherit;
+  width: 100%;
+}
+
+.loginBtn:hover {
+  background: #1e2a7a;
+}
+
+/* ── Error ── */
+.loginErrorMsg {
+  color: #c0392b;
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+}
+
+

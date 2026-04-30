@@ -1,0 +1,75 @@
+/* ── Layout ── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6fb;
+}
+
+.main {
+  margin-left: 68px;
+  flex: 1;
+  padding: 32px;
+  width: calc(100% - 68px);
+}
+
+.content {
+  width: 100%;
+}
+
+/* ── Page Header ── */
+.pageHeader {
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a2150;
+  margin-bottom: 8px;
+}
+
+.divider {
+  border: none;
+  border-top: 1.5px solid #ddd;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.tab {
+  padding: 8px 20px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab:hover {
+  background: #e0e0e0;
+}
+
+.activeTab {
+  background: #f5c842;
+  color: #1a1a1a;
+  font-weight: 600;
+  border-color: #f5c842;
+}
+
+/* ── Card ── */
+.card {
+  border: 2px solid #f5c842;
+  border-radius: 0 6px 6px 6px;
+  background: #fff;
+  min-height: 420px;
+  width: 100%;
+}
