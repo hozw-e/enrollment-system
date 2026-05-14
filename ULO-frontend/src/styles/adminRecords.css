@@ -185,3 +185,194 @@
   padding: 40px;
   background: #fffde7;
 }
+
+
+/* ── Modal ── */
+.adminModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.adminModal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.adminModalTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a2150;
+  margin: 0 0 16px 0;
+}
+
+.adminModalTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.adminModalTable td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+.adminModalLabel {
+  font-weight: 700;
+  color: #333;
+  width: 140px;
+}
+
+.adminModalClose {
+  padding: 8px 20px;
+  background: #4a90d9;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+
+/* ── Full Profile Modal ── */
+.adminProfileModal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  width: 700px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.adminProfileSections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.adminProfileSection {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.adminProfileSection h4 {
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  color: #4a90d9;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+}
+
+.adminProfileGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.adminProfileGrid div {
+  display: flex;
+  flex-direction: column;
+}
+
+.adminProfileGrid span {
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.adminProfileGrid strong {
+  font-size: 0.9rem;
+  color: #1a1a1a;
+}
+
+.adminMiniTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.adminMiniTable th {
+  background: #f5f5f5;
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 1px solid #ddd;
+}
+
+.adminMiniTable td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.adminEmptyText {
+  color: #999;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 8px;
+}
+
+
+/* ── Filter Panel ── */
+.adminFilterPanel {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 12px 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+}
+
+.adminFilterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adminFilterGroup label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.adminFilterGroup select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  min-width: 160px;
+}
+
+.adminClearFilterBtn {
+  padding: 6px 14px;
+  background: #e9ecef;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  align-self: flex-end;
+}
+
+.adminClearFilterBtn:hover {
+  background: #dee2e6;
+}

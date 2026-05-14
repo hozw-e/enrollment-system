@@ -72,4 +72,46 @@
   background: #fff;
   flex: 1;
   min-height: 0;
+  padding: 16px;
+}
+
+/* ── Table ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f5c842;
+  color: #1a1a1a;
+  font-weight: 700;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
+}
+
+.table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.emptyRow td {
+  text-align: center;
+  color: #999;
+  padding: 24px;
+}
+
+/* ── Status ── */
+.status-enrolled { color: #155724; font-weight: 600; }
+.status-dropped { color: #721c24; font-weight: 600; }
+.status-completed { color: #0c5460; font-weight: 600; }
+
+.loadingText {
+  padding: 16px;
+  color: #666;
 }

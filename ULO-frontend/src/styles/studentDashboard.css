@@ -1,27 +1,19 @@
 /* ── Layout ── */
 .layout {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   background: #f4f6fb;
 }
 
 .main {
   margin-left: 68px;
   flex: 1;
-  padding: 16px 24px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  padding: 32px;
+  width: calc(100% - 68px);
 }
 
 .content {
   width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
 /* ── Page Header ── */
@@ -187,4 +179,55 @@
   font-weight: 700;
   width: 140px;
   text-align: center;
+}
+
+
+/* ── Welcome Card ── */
+.welcomeCard {
+  background: #fff;
+  border: 2px solid #4a90d9;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.welcomeCard h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  color: #1a2150;
+}
+
+.welcomeCard p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* ── Stats Row ── */
+.statsRow {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.statBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 24px;
+  background: #f4f6fb;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.statNumber {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4a90d9;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 4px;
 }

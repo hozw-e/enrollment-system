@@ -27,6 +27,7 @@
   $admin = new Admin($pdo);
   $reports = new Reports($pdo);
   $students = new Students($pdo);
+  $profile = new Profile($pdo);
   
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $param = array_values(array_filter(explode("/", $uri)));
@@ -37,10 +38,7 @@ $param = array_values(array_filter(explode("/", $uri)));
   if (!empty($input)) {
     try {
       $decrypted = decryptData($input);
-      // DEBUG: Log what we received
-      error_log("DECRYPTED: " . $decrypted);
       $dt = json_decode($decrypted);
-      error_log("DT object: " . print_r($dt, true));
     } catch (Exception $e) {
       http_response_code(400);
       echo json_encode(["error" => "Invalid encrypted data"]);
@@ -75,6 +73,30 @@ $param = array_values(array_filter(explode("/", $uri)));
           switch ($param[1] ?? '') {
             case 'profile':
               echo $users->getUserProfile($dt);
+              break;
+            default:
+              http_response_code(404);
+              break;
+          }
+          break;
+
+        // --- Profile (full sectioned profile) ---
+        case 'profile':
+          switch ($param[1] ?? '') {
+            case 'full':
+              echo encryptData($profile->getFullProfile($dt->studnum));
+              break;
+            case 'personal':
+              echo encryptData($profile->getPersonalInfo($dt->studnum));
+              break;
+            case 'emergency':
+              echo encryptData($profile->getEmergencyContacts($dt->studnum));
+              break;
+            case 'family':
+              echo encryptData($profile->getFamilyBackground($dt->studnum));
+              break;
+            case 'academic':
+              echo encryptData($profile->getAcademicBackground($dt->studnum));
               break;
             default:
               http_response_code(404);
@@ -117,7 +139,7 @@ $param = array_values(array_filter(explode("/", $uri)));
         case 'admin':
           switch ($param[1] ?? '') {
             case 'students':
-              echo encryptData($admin->getAllStudents());
+              echo json_encode($admin->getAllStudents());
               break;
             case 'courses':
               echo json_encode($admin->getAllCourses());
@@ -153,7 +175,7 @@ $param = array_values(array_filter(explode("/", $uri)));
           break;
       
         case 'students':
-          echo encryptData($students->getStudents());
+          echo json_encode($students->getStudents());
           break;
 
         case 'decryptdata':
@@ -171,6 +193,24 @@ $param = array_values(array_filter(explode("/", $uri)));
         // --- Create Course (admin) ---
         case 'courses':
           echo json_encode($courses->createCourse($dt));
+          break;
+
+        // --- Add Profile Entries ---
+        case 'profile':
+          switch ($param[1] ?? '') {
+            case 'emergency':
+              echo encryptData($profile->addEmergencyContact($dt));
+              break;
+            case 'family':
+              echo encryptData($profile->addFamilyMember($dt));
+              break;
+            case 'academic':
+              echo encryptData($profile->addAcademicRecord($dt));
+              break;
+            default:
+              http_response_code(404);
+              break;
+          }
           break;
 
         case 'students':
@@ -197,6 +237,27 @@ $param = array_values(array_filter(explode("/", $uri)));
           }
           break;
 
+        // --- Update Profile Sections ---
+        case 'profile':
+          switch ($param[1] ?? '') {
+            case 'personal':
+              echo encryptData($profile->updatePersonalInfo($dt));
+              break;
+            case 'emergency':
+              echo encryptData($profile->updateEmergencyContact($dt));
+              break;
+            case 'family':
+              echo encryptData($profile->updateFamilyMember($dt));
+              break;
+            case 'academic':
+              echo encryptData($profile->updateAcademicRecord($dt));
+              break;
+            default:
+              http_response_code(404);
+              break;
+          }
+          break;
+
         // --- Update Course (admin) ---
         case 'courses':
           echo json_encode($courses->updateCourse($dt));
@@ -214,6 +275,28 @@ $param = array_values(array_filter(explode("/", $uri)));
 
     case 'DELETE':
       switch ($param[0]) {
+        case 'courses':
+          echo json_encode($courses->deleteCourse($dt));
+          break;
+
+        // --- Delete Profile Entries ---
+        case 'profile':
+          switch ($param[1] ?? '') {
+            case 'emergency':
+              echo json_encode($profile->deleteEmergencyContact($dt));
+              break;
+            case 'family':
+              echo json_encode($profile->deleteFamilyMember($dt));
+              break;
+            case 'academic':
+              echo json_encode($profile->deleteAcademicRecord($dt));
+              break;
+            default:
+              http_response_code(404);
+              break;
+          }
+          break;
+
         case 'students':
           echo json_encode($students->archiveStudent($dt));
           break;

@@ -1,22 +1,35 @@
+import { useState, useEffect } from 'react';
 import '../styles/studentDashboard.css';
 import StudentSidebar from '../components/studentSidebar';
 import { MdCampaign } from 'react-icons/md';
-
-const enrollmentHistory = [
-  { semester: '2023-2024, 1st Semester', status: 'Officially Enrolled', statusClass: 'statusEnrolled',    date: 'August 9, 2023' },
-  { semester: '2023-2024, 2nd Semester', status: 'Officially Enrolled', statusClass: 'statusEnrolled',    date: 'January 20, 2024' },
-  { semester: '2023-2024, Midyear',      status: 'Not Enlisted',        statusClass: 'statusNotEnlisted', date: '' },
-  { semester: '2024-2025, 1st Semester', status: 'Officially Enrolled', statusClass: 'statusEnrolled',    date: 'July 30, 2024' },
-  { semester: '2024-2025, 2nd Semester', status: 'Officially Enrolled', statusClass: 'statusEnrolled',    date: 'January 19, 2025' },
-  { semester: '2024-2025, Midyear',      status: 'Officially Enrolled', statusClass: 'statusEnrolled',    date: 'June 15, 2025' },
-  { semester: '2025-2026, 1st Semester', status: 'Officially Enrolled', statusClass: 'statusEnrolled',    date: 'August 10, 2025' },
-  { semester: '2025-2026, 2nd Semester', status: 'Officially Enrolled', statusClass: 'statusEnrolled',    date: 'January 19, 2026' },
-  { semester: '2025-2026, Midyear',      status: '', statusClass: '', date: '' },
-  { semester: '2026-2027, 1st Semester', status: '', statusClass: '', date: '' },
-  { semester: '2026-2027, 2nd Semester', status: '', statusClass: '', date: '' },
-];
+import { getEnrollments } from '../utils/apiClient';
 
 function StudentDashboard() {
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const user = JSON.parse(sessionStorage.getItem('user'));
+
+  useEffect(() => {
+    fetchEnrollments();
+  }, []);
+
+  const fetchEnrollments = async () => {
+    try {
+      setLoading(true);
+      const data = await getEnrollments(user.studnum);
+      setEnrollments(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to load enrollments:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalUnits = enrollments
+    .filter(e => e.fld_status === 'enrolled')
+    .reduce((sum, e) => sum + (e.fld_units || 0), 0);
+
   return (
     <div className="layout">
       <StudentSidebar />
@@ -28,6 +41,12 @@ function StudentDashboard() {
           <div className="pageHeader">
             <h1 className="pageTitle">Dashboard</h1>
             <hr className="divider" />
+          </div>
+
+          {/* Welcome */}
+          <div className="welcomeCard">
+            <h2>Welcome, {user.fname || user.username}!</h2>
+            <p>Student Number: {user.studnum}</p>
           </div>
 
           {/* Two Columns */}
@@ -43,56 +62,56 @@ function StudentDashboard() {
               </div>
             </div>
 
-            {/* Right Column - Enrollment History + Status Legend */}
+            {/* Right Column - Enrollment Summary */}
             <div className="rightColumn">
 
-              {/* Enrollment History */}
               <div className="card">
-                <h2 className="cardTitle">Enrollment History</h2>
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Academic Year/Semester</th>
-                      <th>Enrollment Status</th>
-                      <th>Date of Enrollment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {enrollmentHistory.map((row, i) => (
-                      <tr key={i} className={i >= 0 && i <= 6 ? 'rowYellow' : 'rowWhite'}>
-                        <td>{row.semester}</td>
-                        <td className={row.statusClass}>{row.status}</td>
-                        <td>{row.date}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <h2 className="cardTitle">Enrollment Summary</h2>
+                <div className="statsRow">
+                  <div className="statBox">
+                    <span className="statNumber">{enrollments.filter(e => e.fld_status === 'enrolled').length}</span>
+                    <span className="statLabel">Enrolled Courses</span>
+                  </div>
+                  <div className="statBox">
+                    <span className="statNumber">{totalUnits}</span>
+                    <span className="statLabel">Total Units</span>
+                  </div>
+                  <div className="statBox">
+                    <span className="statNumber">{enrollments.filter(e => e.fld_status === 'completed').length}</span>
+                    <span className="statLabel">Completed</span>
+                  </div>
+                </div>
               </div>
 
-              {/* Enrollment Status Legend */}
-              <div className="cardWide">
-                <table className="legendTable">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '160px' }}>Enrollment Status</th>
-                      <th>Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="legendStatus statusNotEnlisted">Not Enlisted</td>
-                      <td>You are not done with the Enlistment Process</td>
-                    </tr>
-                    <tr>
-                      <td className="legendStatus statusWillNotEnroll">Will Not Enroll</td>
-                      <td>You marked yourself as will not enroll for the semester OR you've been automatically mark as WILL NOT ENROLL because you have not done the enlistment process</td>
-                    </tr>
-                    <tr>
-                      <td className="legendStatus statusEnrolled">Officially Enrolled</td>
-                      <td>Your enrollment has been approved by the registrar.</td>
-                    </tr>
-                  </tbody>
-                </table>
+              {/* Current Enrollments */}
+              <div className="card">
+                <h2 className="cardTitle">Current Enrollments</h2>
+                {loading ? (
+                  <p style={{ padding: '0.5rem' }}>Loading...</p>
+                ) : enrollments.filter(e => e.fld_status === 'enrolled').length > 0 ? (
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Course Code</th>
+                        <th>Course Name</th>
+                        <th>Units</th>
+                        <th>Date Enrolled</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {enrollments.filter(e => e.fld_status === 'enrolled').map(e => (
+                        <tr key={e.fld_enrollment_id}>
+                          <td>{e.fld_course_code}</td>
+                          <td>{e.fld_course_name}</td>
+                          <td>{e.fld_units}</td>
+                          <td>{new Date(e.fld_enrollment_date).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p style={{ padding: '0.5rem', color: '#666' }}>No current enrollments</p>
+                )}
               </div>
 
             </div>

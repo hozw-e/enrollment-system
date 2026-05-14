@@ -36,20 +36,7 @@ class Auth {
   }
 
   public function login($dt) {
-    error_log("LOGIN START - username: " . $dt->username);
-    
-    // Use direct query instead of stored procedure to avoid PDO result set issues
-    $sql = "SELECT a.fld_studnum, a.fld_username, a.fld_pword, a.fld_role, a.fld_hasaccess,
-                   i.fld_fname, i.fld_lname
-            FROM bscs3a_accounts.tbl_accounts a
-            LEFT JOIN bscs3a_students.tbl_information i ON a.fld_studnum = i.fld_studnum
-            WHERE a.fld_username = ?";
-    
-    error_log("LOGIN - about to query DB");
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([$dt->username]);
-    $res = $stmt->fetchAll();
-    error_log("LOGIN - query result count: " . count($res));
+    $res = execQuery("CALL loginAccount(?)", [$dt->username], $this->pdo);
     
     if (count($res) > 0) {
       // Check if user has access

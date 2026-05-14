@@ -1,0 +1,145 @@
+/* ── Layout ── */
+.adminDashLayout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6fb;
+}
+
+.adminDashMain {
+  margin-left: 68px;
+  flex: 1;
+  padding: 32px;
+  width: calc(100% - 68px);
+}
+
+.adminDashContent {
+  width: 100%;
+}
+
+/* ── Page Header ── */
+.adminDashHeader {
+  margin-bottom: 24px;
+}
+
+.adminDashTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a2150;
+  margin-bottom: 8px;
+}
+
+.adminDashDivider {
+  border: none;
+  border-top: 1.5px solid #ddd;
+}
+
+/* ── Welcome Card ── */
+.adminWelcomeCard {
+  background: #fff;
+  border: 2px solid #4a90d9;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.adminWelcomeCard h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  color: #1a2150;
+}
+
+.adminWelcomeCard p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* ── Stats Grid ── */
+.adminStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.adminStatCard {
+  background: #fff;
+  border: 2px solid #f5c842;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.adminStatNumber {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #4a90d9;
+}
+
+.adminStatLabel {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 600;
+}
+
+/* ── Card ── */
+.adminDashCard {
+  background: #fff;
+  border: 2px solid #f5c842;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.adminDashCardTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a2150;
+  margin: 0 0 16px 0;
+}
+
+/* ── Table ── */
+.adminDashTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.adminDashTable th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #ddd;
+  color: #333;
+  font-weight: 700;
+  background: #f9f9f9;
+}
+
+.adminDashTable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+}
+
+.adminDashTable tbody tr:hover {
+  background: #fffde7;
+}
+
+.adminDashEmpty {
+  color: #999;
+  text-align: center;
+  padding: 24px;
+}
+
+/* ── Status ── */
+.status-enrolled { color: #155724; font-weight: 600; }
+.status-dropped { color: #721c24; font-weight: 600; }
+.status-completed { color: #0c5460; font-weight: 600; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .adminStatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

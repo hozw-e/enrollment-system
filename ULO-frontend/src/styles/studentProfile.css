@@ -1,122 +1,76 @@
 /* ── Layout ── */
-.layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f4f6fb;
-}
+.layout { display: flex; min-height: 100vh; background: #f4f6fb; }
+.main { margin-left: 68px; flex: 1; padding: 32px; width: calc(100% - 68px); }
+.content { width: 100%; }
 
-.main {
-  margin-left: 68px;
-  flex: 1;
-  padding: 32px;
-  width: calc(100% - 68px);
-}
+/* ── Page Header ── */
+.pageHeader { margin-bottom: 24px; }
+.pageTitle { font-size: 1.5rem; font-weight: 700; color: #1a2150; margin: 0 0 8px 0; }
+.divider { border: none; border-top: 2px solid #f5c842; }
 
-.content {
-  width: 100%;
-}
-
-/* ── Info Card ── */
-.infoCard {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  border: 2px solid #4a90d9;
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 24px;
-  width: fit-content;
-}
-
-.photoWrapper {
-  width: 160px;
-  min-height: 140px;
-  background: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 2px solid #4a90d9;
-  flex-shrink: 0;
-}
-
-.photoPlaceholder {
-  font-size: 5rem;
-  color: #aaa;
-}
-
-.photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ── Info Table ── */
-.infoTable {
-  border-collapse: collapse;
-}
-
-.infoTable tr {
-  border-bottom: 1px solid #ddd;
-}
-
-.infoTable tr:last-child {
-  border-bottom: none;
-}
-
-.infoLabel {
-  background: #f5c842;
-  color: #1a1a1a;
-  font-weight: 700;
-  padding: 10px 20px;
-  border-right: 1px solid #ddd;
-  white-space: nowrap;
-  width: 140px;
-}
-
-.infoValue {
-  padding: 10px 24px;
-  font-weight: 600;
-  color: #1a1a1a;
-  min-width: 500px;
-}
+/* ── Profile Header ── */
+.profileHeader { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 16px 20px; background: #fff; border: 2px solid #4a90d9; border-radius: 10px; }
+.profileAvatar { font-size: 4rem; color: #aaa; }
+.profileHeader h2 { margin: 0; font-size: 1.3rem; color: #1a2150; }
+.profileHeader p { margin: 4px 0 0; color: #666; font-size: 0.9rem; }
 
 /* ── Tabs ── */
-.tabs {
-  display: flex;
-  flex-direction: row;
-  gap: 0;
-  margin-bottom: 0;
-}
-
-.tab {
-  padding: 8px 20px;
-  border: 1px solid #ccc;
-  background: #f0f0f0;
-  color: #333;
-  font-size: 0.85rem;
-  cursor: pointer;
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
-  font-family: inherit;
-  transition: background 0.2s, color 0.2s;
-}
-
-.tab:hover {
-  background: #e0e0e0;
-}
-
-.activeTab {
-  background: #f5c842;
-  color: #1a1a1a;
-  font-weight: 600;
-  border-color: #f5c842;
-}
+.tabs { display: flex; gap: 0; margin-bottom: 0; }
+.tab { padding: 8px 20px; border: 1px solid #ccc; background: #f0f0f0; color: #333; font-size: 0.85rem; cursor: pointer; border-bottom: none; border-radius: 6px 6px 0 0; font-family: inherit; transition: background 0.2s; }
+.tab:hover { background: #e0e0e0; }
+.activeTab { background: #f5c842; color: #1a1a1a; font-weight: 600; border-color: #f5c842; }
 
 /* ── Card ── */
-.card {
-  border: 2px solid #f5c842;
-  border-radius: 0 6px 6px 6px;
-  background: #fff;
-  min-height: 420px;
-  width: 100%;
+.card { border: 2px solid #f5c842; border-radius: 0 6px 6px 6px; background: #fff; min-height: 300px; padding: 20px; }
+
+/* ── Profile Section ── */
+.profileSection { }
+.sectionHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.sectionHeader h3 { margin: 0; font-size: 1.1rem; color: #1a2150; }
+
+/* ── Info Grid ── */
+.infoGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.infoItem { display: flex; flex-direction: column; padding: 10px 14px; background: #f9f9f9; border-radius: 6px; border: 1px solid #eee; }
+.infoItem .label { font-size: 0.75rem; color: #888; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+.infoItem .value { font-size: 0.95rem; color: #1a1a1a; font-weight: 500; }
+
+/* ── Form ── */
+.profileForm { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.formRow { display: flex; gap: 12px; margin-bottom: 12px; }
+.formRow .formGroup { flex: 1; }
+.formGroup { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.formGroup label { font-weight: 600; font-size: 0.8rem; color: #333; }
+.formGroup input, .formGroup select, .formGroup textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
+.formActions { display: flex; gap: 10px; margin-top: 8px; }
+
+/* ── Buttons ── */
+.saveBtn { padding: 8px 20px; background: #4a90d9; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+.saveBtn:disabled { background: #aaa; cursor: not-allowed; }
+.cancelBtn { padding: 8px 20px; background: #e0e0e0; color: #333; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+.editBtn { padding: 8px 20px; background: #4a90d9; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin: 12px 0; }
+.iconBtn { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #4a90d9; padding: 4px; border-radius: 4px; }
+.iconBtn:hover { background: #e8f0fe; }
+.iconBtn.danger { color: #dc3545; }
+.iconBtn.danger:hover { background: #fdecea; }
+.addSectionBtn { display: flex; align-items: center; gap: 4px; padding: 6px 14px; background: #4a90d9; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+.addSectionBtn:hover { background: #357abd; }
+
+/* ── Items List ── */
+.itemsList { display: flex; flex-direction: column; gap: 10px; }
+.itemCard { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; }
+.itemInfo { flex: 1; }
+.itemInfo strong { font-size: 0.95rem; color: #1a2150; }
+.itemInfo p { margin: 4px 0 0; font-size: 0.8rem; color: #666; }
+.itemInfo .subtext { font-size: 0.75rem; color: #999; margin-top: 2px; }
+.itemActions { display: flex; gap: 6px; }
+
+/* ── Badges ── */
+.primaryBadge { background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; margin-left: 8px; }
+.typeBadge { background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; margin-left: 8px; text-transform: capitalize; }
+.deceasedBadge { background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+.emptyText { color: #999; text-align: center; padding: 24px; }
+
+@media (max-width: 768px) {
+  .infoGrid { grid-template-columns: 1fr; }
+  .formRow { flex-direction: column; }
 }

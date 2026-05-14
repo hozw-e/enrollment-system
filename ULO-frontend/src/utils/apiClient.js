@@ -82,17 +82,48 @@ async function encryptData(data) {
 
 /**
  * Decrypt data (for encrypted responses from backend)
+ * Backend encrypts with AES-256-GCM and wraps as: { payload: base64({ data, iv, tag }) }
  */
-function decodeResponse(encryptedData) {
+async function decryptResponse(encryptedData) {
   try {
-    const parsed = JSON.parse(encryptedData);
-    if (parsed.payload) {
-      const decodedPayload = atob(parsed.payload);
-      return JSON.parse(decodedPayload);
+    const parsed = typeof encryptedData === 'string' ? JSON.parse(encryptedData) : encryptedData;
+    if (!parsed.payload) return parsed;
+
+    const decodedPayload = atob(parsed.payload);
+    const inner = JSON.parse(decodedPayload);
+
+    if (!inner.data || !inner.iv || !inner.tag) {
+      // Not AES encrypted, just base64 wrapped
+      return inner;
     }
-    return parsed;
+
+    const key = await getCryptoKey();
+    const cipherText = base64ToBytes(inner.data);
+    const iv = base64ToBytes(inner.iv);
+    const tag = base64ToBytes(inner.tag);
+
+    // Combine ciphertext + tag for Web Crypto API
+    const combined = new Uint8Array(cipherText.length + tag.length);
+    combined.set(cipherText);
+    combined.set(tag, cipherText.length);
+
+    const decrypted = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv, tagLength: 128 },
+      key,
+      combined
+    );
+
+    const plainText = new TextDecoder().decode(decrypted);
+    return JSON.parse(plainText);
   } catch (error) {
     console.error('Decryption error:', error);
+    // Fallback: try simple base64 decode
+    try {
+      const parsed = typeof encryptedData === 'string' ? JSON.parse(encryptedData) : encryptedData;
+      if (parsed.payload) {
+        return JSON.parse(atob(parsed.payload));
+      }
+    } catch (e) { /* ignore */ }
     return null;
   }
 }
@@ -115,8 +146,8 @@ export async function apiRequest(endpoint, method = 'POST', data = null) {
       },
     };
 
-    // For POST, PUT, PATCH - encrypt and send data
-    if (['POST', 'PUT', 'PATCH'].includes(method) && data) {
+    // For POST, PUT, PATCH, DELETE - encrypt and send data
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) && data) {
       options.body = await encryptData(data);
     }
 
@@ -144,7 +175,7 @@ export async function apiRequest(endpoint, method = 'POST', data = null) {
         // Check if it's encrypted (has payload property)
         if (responseData.payload) {
           try {
-            responseData = decodeResponse(responseText);
+            responseData = await decryptResponse(responseText);
           } catch (e) {
             // If decryption fails, use the parsed JSON as-is
           }
@@ -232,12 +263,12 @@ export async function register(userData) {
 
 /**
  * Get user profile
- * @param {string} token - JWT token
+ * @param {string} studnum - Student number
  * @returns {Promise} - User profile data
  */
-export async function getUserProfile(token) {
+export async function getUserProfile(studnum) {
   try {
-    const response = await apiRequest('users/profile', 'GET');
+    const response = await apiRequest('users/profile', 'POST', { studnum });
     return response;
   } catch (error) {
     throw error;
@@ -287,12 +318,14 @@ export async function getCourseById(courseId) {
 
 /**
  * Enroll student in course
- * @param {string} courseId - Course ID
+ * @param {string} studnum - Student number
+ * @param {number} courseId - Course ID
  * @returns {Promise} - Enrollment response
  */
-export async function enrollCourse(courseId) {
+export async function enrollCourse(studnum, courseId) {
   try {
     const response = await apiRequest('enrollments', 'POST', {
+      studnum,
       course_id: courseId,
     });
     return response;
@@ -303,15 +336,234 @@ export async function enrollCourse(courseId) {
 
 /**
  * Get student enrollments
- * @param {string} studentId - Student ID
+ * @param {string} studnum - Student number
  * @returns {Promise} - List of enrollments
  */
-export async function getEnrollments(studentId) {
+export async function getEnrollments(studnum) {
   try {
     const response = await apiRequest('enrollments/student', 'POST', {
-      student_id: studentId,
+      studnum,
     });
     return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Get all students (admin)
+ * @returns {Promise} - List of all students
+ */
+export async function getAdminStudents() {
+  try {
+    const response = await apiRequest('admin/students', 'POST');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Get all courses with admin details (admin)
+ * @returns {Promise} - List of all courses with enrollment counts
+ */
+export async function getAdminCourses() {
+  try {
+    const response = await apiRequest('admin/courses', 'POST');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Create a new course (admin)
+ * @param {object} courseData - Course data { code, name, description, units, max_students }
+ * @returns {Promise} - Created course
+ */
+export async function createCourse(courseData) {
+  try {
+    const response = await apiRequest('courses', 'PUT', courseData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Update a course (admin)
+ * @param {object} courseData - Course data { course_id, code, name, description, units, max_students }
+ * @returns {Promise} - Updated course
+ */
+export async function updateCourseAdmin(courseData) {
+  try {
+    const response = await apiRequest('courses', 'PATCH', courseData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Delete a course (admin) - soft delete (deactivates)
+ * @param {number} courseId - Course ID to delete
+ * @returns {Promise} - Delete response
+ */
+export async function deleteCourse(courseId) {
+  try {
+    const response = await apiRequest('courses', 'DELETE', { course_id: courseId });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Get enrollment report (admin)
+ * @returns {Promise} - Enrollment report data
+ */
+export async function getEnrollmentReport() {
+  try {
+    const response = await apiRequest('reports/enrollments', 'POST');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Get course popularity report (admin)
+ * @returns {Promise} - Course popularity data
+ */
+export async function getCoursePopularity() {
+  try {
+    const response = await apiRequest('reports/course-popularity', 'POST');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// ─── PROFILE API ───
+
+/**
+ * Get full student profile (all sections)
+ * @param {string} studnum - Student number
+ * @returns {Promise} - { personal, emergency_contacts, family_background, academic_background }
+ */
+export async function getFullProfile(studnum) {
+  try {
+    return await apiRequest('profile/full', 'POST', { studnum });
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Update personal info
+ */
+export async function updatePersonalInfo(data) {
+  try {
+    return await apiRequest('profile/personal', 'PATCH', data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Add emergency contact
+ */
+export async function addEmergencyContact(data) {
+  try {
+    return await apiRequest('profile/emergency', 'PUT', data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Update emergency contact
+ */
+export async function updateEmergencyContact(data) {
+  try {
+    return await apiRequest('profile/emergency', 'PATCH', data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Delete emergency contact
+ */
+export async function deleteEmergencyContact(contactId, studnum) {
+  try {
+    return await apiRequest('profile/emergency', 'DELETE', { contact_id: contactId, studnum });
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Add family member
+ */
+export async function addFamilyMember(data) {
+  try {
+    return await apiRequest('profile/family', 'PUT', data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Update family member
+ */
+export async function updateFamilyMember(data) {
+  try {
+    return await apiRequest('profile/family', 'PATCH', data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Delete family member
+ */
+export async function deleteFamilyMemberApi(familyId, studnum) {
+  try {
+    return await apiRequest('profile/family', 'DELETE', { family_id: familyId, studnum });
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Add academic record
+ */
+export async function addAcademicRecord(data) {
+  try {
+    return await apiRequest('profile/academic', 'PUT', data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Update academic record
+ */
+export async function updateAcademicRecord(data) {
+  try {
+    return await apiRequest('profile/academic', 'PATCH', data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Delete academic record
+ */
+export async function deleteAcademicRecord(academicId, studnum) {
+  try {
+    return await apiRequest('profile/academic', 'DELETE', { academic_id: academicId, studnum });
   } catch (error) {
     throw error;
   }
@@ -327,4 +579,11 @@ export default {
   getCourseById,
   enrollCourse,
   getEnrollments,
+  getAdminStudents,
+  getAdminCourses,
+  createCourse,
+  updateCourseAdmin,
+  deleteCourse,
+  getEnrollmentReport,
+  getCoursePopularity,
 };

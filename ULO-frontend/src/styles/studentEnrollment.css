@@ -68,8 +68,114 @@
 /* ── Card ── */
 .card {
   border: 2px solid #f5c842;
-  border-radius: 0 6px 6px 6px;
+  border-radius: 6px;
   background: #fff;
-  min-height: 420px;
+  min-height: 200px;
   width: 100%;
+  padding: 16px;
+}
+
+.cardTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a2150;
+  margin: 0 0 12px 0;
+}
+
+/* ── Table ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f5c842;
+  color: #1a1a1a;
+  font-weight: 700;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
+}
+
+.table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.emptyRow td {
+  text-align: center;
+  color: #999;
+  padding: 24px;
+}
+
+/* ── Enroll Button ── */
+.enrollBtn {
+  padding: 6px 16px;
+  background: #4a90d9;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.enrollBtn:hover {
+  background: #357abd;
+}
+
+.enrollBtn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.enrolledBadge {
+  padding: 4px 12px;
+  background: #d4edda;
+  color: #155724;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.fullBadge {
+  padding: 4px 12px;
+  background: #f8d7da;
+  color: #721c24;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ── Status ── */
+.status-enrolled { color: #155724; font-weight: 600; }
+.status-dropped { color: #721c24; font-weight: 600; }
+.status-completed { color: #0c5460; font-weight: 600; }
+
+/* ── Message ── */
+.message {
+  padding: 10px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.loadingText {
+  padding: 16px;
+  color: #666;
 }

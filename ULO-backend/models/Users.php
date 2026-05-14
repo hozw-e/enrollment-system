@@ -10,10 +10,10 @@ class Users {
     $values = [$dt->studnum];
     $res = execQuery("CALL getUserProfile(?)", $values, $this->pdo);
     if (count($res) > 0) {
-      return encryptData($res[0]);
+      return json_encode($res[0]);
     }
     http_response_code(404);
-    return array("msg" => "Profile not found");
+    return json_encode(array("msg" => "Profile not found"));
   }
 
   public function updateUserProfile($dt) {

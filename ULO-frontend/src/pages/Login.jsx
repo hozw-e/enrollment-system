@@ -35,7 +35,7 @@ function Login() {
         if (result.user.role === 'student') {
           navigate('/studentDashboard');
         } else if (result.user.role === 'admin') {
-          navigate('/adminRecords');
+          navigate('/adminDashboard');
         } else {
           setError('Unknown user role');
         }

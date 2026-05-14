@@ -24,4 +24,13 @@ class Courses {
     $values = [$dt->course_id, $dt->code, $dt->name, $dt->description, $dt->units, $dt->max_students];
     return execQuery("CALL updateCourse(?, ?, ?, ?, ?, ?)", $values, $this->pdo);
   }
+
+  public function deleteCourse($dt) {
+    $res = execQuery("CALL deleteCourse(?)", [$dt->course_id], $this->pdo);
+    if (count($res) > 0 && $res[0]['affected'] > 0) {
+      return array("msg" => "Course deleted successfully");
+    }
+    http_response_code(404);
+    return array("msg" => "Course not found");
+  }
 }
