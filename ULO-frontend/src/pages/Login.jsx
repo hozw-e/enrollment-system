@@ -6,6 +6,7 @@ import ellipse2 from '../assets/ellipse2.png';
 import { FaUserCircle, FaLock } from 'react-icons/fa';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { login as apiLogin } from '../utils/apiClient';
 
 function Login() {
   const navigate = useNavigate();
@@ -13,19 +14,39 @@ function Login() {
   const [password, setPassword]           = useState('');
   const [showPassword, setShowPassword]   = useState(false);
   const [error, setError]                 = useState('');
+  const [loading, setLoading]             = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    if (username === 'S2026001' && password === 'student123') {
-      sessionStorage.setItem('user', JSON.stringify({ role: 'student', username, name: 'Juan Dela Cruz' }));
-      navigate('/studentDashboard');
-    } else if (username === 'admin001' && password === 'admin123') {
-      sessionStorage.setItem('user', JSON.stringify({ role: 'admin', username, name: 'Maria Santos' }));
-      navigate('/adminRecords');
-    } else {
-      setError('Invalid username or password');
+    try {
+      const result = await apiLogin(username, password);
+      
+      if (result.success) {
+        // Store user data and token in sessionStorage
+        sessionStorage.setItem('user', JSON.stringify({
+          ...result.user,
+          token: result.token,
+        }));
+        
+        // Navigate based on role
+        if (result.user.role === 'student') {
+          navigate('/studentDashboard');
+        } else if (result.user.role === 'admin') {
+          navigate('/adminRecords');
+        } else {
+          setError('Unknown user role');
+        }
+      } else {
+        setError(result.message || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.message || 'An error occurred during login');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,8 +102,12 @@ function Login() {
 
           {error && <p className="loginErrorMsg">{error}</p>}
 
-          <button type="submit" className="loginBtn">
-            Log in
+          <button 
+            type="submit" 
+            className="loginBtn"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Log in'}
           </button>
 
         </form>
