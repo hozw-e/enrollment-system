@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/adminReports.css';
 import AdminSidebar from '../components/adminSidebar';
+import Pagination from '../components/Pagination';
 import { MdSearch } from 'react-icons/md';
 import { getEnrollmentReport, getCoursePopularity } from '../utils/apiClient';
 
@@ -15,6 +16,10 @@ function AdminReports() {
   const [enrollmentData, setEnrollmentData] = useState([]);
   const [popularityData, setPopularityData] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchData();
@@ -54,6 +59,14 @@ function AdminReports() {
       (c.fld_course_name || '').toLowerCase().includes(term)
     );
   });
+
+  // Reset page when search or tab changes
+  useEffect(() => { setCurrentPage(1); }, [search, activeTab]);
+
+  const currentData = activeTab === 'enrollments' ? filteredEnrollments : filteredPopularity;
+  const totalPages = Math.ceil(currentData.length / itemsPerPage);
+  const paginatedEnrollments = filteredEnrollments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedPopularity = filteredPopularity.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="layout">
@@ -96,6 +109,7 @@ function AdminReports() {
             {loading ? (
               <p style={{ padding: '1rem' }}>Loading reports...</p>
             ) : activeTab === 'enrollments' ? (
+              <>
               <table className="table">
                 <thead>
                   <tr>
@@ -109,7 +123,7 @@ function AdminReports() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredEnrollments.length > 0 ? filteredEnrollments.map(e => (
+                  {paginatedEnrollments.length > 0 ? paginatedEnrollments.map(e => (
                     <tr key={e.fld_enrollment_id}>
                       <td>{e.fld_studnum}</td>
                       <td>{e.fld_fname} {e.fld_lname}</td>
@@ -126,7 +140,16 @@ function AdminReports() {
                   )}
                 </tbody>
               </table>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredEnrollments.length}
+                itemsPerPage={itemsPerPage}
+              />
+              </>
             ) : (
+              <>
               <table className="table">
                 <thead>
                   <tr>
@@ -141,7 +164,7 @@ function AdminReports() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredPopularity.length > 0 ? filteredPopularity.map(c => (
+                  {paginatedPopularity.length > 0 ? paginatedPopularity.map(c => (
                     <tr key={c.fld_course_id}>
                       <td>{c.fld_course_code}</td>
                       <td>{c.fld_course_name}</td>
@@ -159,6 +182,14 @@ function AdminReports() {
                   )}
                 </tbody>
               </table>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredPopularity.length}
+                itemsPerPage={itemsPerPage}
+              />
+              </>
             )}
           </div>
 

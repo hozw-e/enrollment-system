@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/adminCourses.css';
 import AdminSidebar from '../components/adminSidebar';
+import Pagination from '../components/Pagination';
 import { MdSearch, MdAdd } from 'react-icons/md';
 import { getAdminCourses, createCourse, updateCourseAdmin, deleteCourse } from '../utils/apiClient';
 import { ConfirmModal, AlertModal } from '../components/Modal';
@@ -18,6 +19,10 @@ function AdminCourses() {
   // Modal states
   const [confirmModal, setConfirmModal] = useState({ show: false, title: '', message: '', onConfirm: null });
   const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', variant: 'success' });
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchCourses();
@@ -47,6 +52,12 @@ function AdminCourses() {
       (c.fld_course_name || '').toLowerCase().includes(term)
     );
   });
+
+  // Reset page when search changes
+  useEffect(() => { setCurrentPage(1); }, [search]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedCourses = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleCreate = async () => {
     if (!form.code || !form.name) {
@@ -81,10 +92,11 @@ function AdminCourses() {
   };
 
   const handleDeleteClick = (course) => {
+    setSelectedCourse(null);
     setConfirmModal({
       show: true,
       title: 'Delete Course',
-      message: `Are you sure you want to delete "${course.fld_course_code} - ${course.fld_course_name}"? This action will deactivate the course.`,
+      message: `Are you sure you want to permanently delete "${course.fld_course_code} - ${course.fld_course_name}"? This action cannot be undone.`,
       onConfirm: () => confirmDelete(course),
     });
   };
@@ -92,12 +104,17 @@ function AdminCourses() {
   const confirmDelete = async (course) => {
     setConfirmModal({ show: false, title: '', message: '', onConfirm: null });
     try {
-      await deleteCourse(course.fld_course_id);
-      showAlert('Success', 'Course deleted successfully.', 'success');
-      setSelectedCourse(null);
-      fetchCourses();
+      const result = await deleteCourse(course.fld_course_id);
+
+      if (result && result.error) {
+        showAlert('Error', result.error, 'error');
+      } else {
+        showAlert('Success', 'Course deleted successfully.', 'success');
+        fetchCourses();
+      }
     } catch (err) {
-      showAlert('Error', 'Failed to delete course. Please try again.', 'error');
+      console.error('Delete error:', err);
+      showAlert('Error', err.message || 'Failed to delete course. Please try again.', 'error');
     }
   };
 
@@ -151,6 +168,7 @@ function AdminCourses() {
             {loading ? (
               <p style={{ padding: '1rem' }}>Loading courses...</p>
             ) : (
+              <>
               <table className="table">
                 <thead>
                   <tr>
@@ -164,7 +182,7 @@ function AdminCourses() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.length > 0 ? filtered.map(course => (
+                  {paginatedCourses.length > 0 ? paginatedCourses.map(course => (
                     <tr key={course.fld_course_id} onClick={() => setSelectedCourse(course)}>
                       <td>{course.fld_course_code}</td>
                       <td>{course.fld_course_name}</td>
@@ -181,6 +199,14 @@ function AdminCourses() {
                   )}
                 </tbody>
               </table>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filtered.length}
+                itemsPerPage={itemsPerPage}
+              />
+              </>
             )}
           </div>
 

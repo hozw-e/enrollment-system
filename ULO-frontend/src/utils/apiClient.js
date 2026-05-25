@@ -1,6 +1,17 @@
 // API Client for backend communication
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const SECRET_KEY = import.meta.env.VITE_SECRET_KEY || 'a-string-secret-at-least-256-bit';
+const SECRET_KEY = import.meta.env.VITE_SECRET_KEY || '4f3c2e1d5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d';
+
+/**
+ * Convert hex string to Uint8Array (for proper 256-bit key)
+ */
+function hexToBytes(hex) {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+  }
+  return bytes;
+}
 
 /**
  * Convert a string to a Uint8Array
@@ -33,11 +44,11 @@ function base64ToBytes(base64) {
 }
 
 /**
- * Get CryptoKey from secret string for AES-256-GCM
+ * Get CryptoKey from hex secret for AES-256-GCM
  */
 async function getCryptoKey() {
-  // AES-256 requires exactly 32 bytes key
-  const keyBytes = stringToBytes(SECRET_KEY).slice(0, 32);
+  // Convert hex string to 32 bytes (256 bits)
+  const keyBytes = hexToBytes(SECRET_KEY);
   return crypto.subtle.importKey(
     'raw',
     keyBytes,
@@ -116,7 +127,6 @@ async function decryptResponse(encryptedData) {
     const plainText = new TextDecoder().decode(decrypted);
     return JSON.parse(plainText);
   } catch (error) {
-    console.error('Decryption error:', error);
     // Fallback: try simple base64 decode
     try {
       const parsed = typeof encryptedData === 'string' ? JSON.parse(encryptedData) : encryptedData;
@@ -151,20 +161,14 @@ export async function apiRequest(endpoint, method = 'POST', data = null) {
       options.body = await encryptData(data);
     }
 
-    console.log(`[API] ${method} ${url}`, data);
+
 
     const response = await fetch(url, options);
 
     // Get response text first
     const responseText = await response.text();
 
-    // Check if response is ok
-    if (!response.ok) {
-      console.error(`[API Error] ${response.status}:`, responseText);
-      throw new Error(`HTTP ${response.status}: ${responseText}`);
-    }
-
-    // Try to parse response
+    // Try to parse and decrypt response
     let responseData;
 
     if (responseText) {
@@ -186,10 +190,14 @@ export async function apiRequest(endpoint, method = 'POST', data = null) {
       }
     }
 
-    console.log(`[API Response]`, responseData);
+    // Check if response is ok
+    if (!response.ok) {
+      const errorMsg = responseData?.error || responseData?.msg || `HTTP ${response.status}`;
+      throw new Error(errorMsg);
+    }
+
     return responseData;
   } catch (error) {
-    console.error('[API Error]', error);
     throw error;
   }
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/studentEnrollment.css';
 import StudentSidebar from '../components/studentSidebar';
+import Pagination from '../components/Pagination';
 import { getCourses, getEnrollments, enrollCourse } from '../utils/apiClient';
 import { ConfirmModal, AlertModal } from '../components/Modal';
 
@@ -13,6 +14,12 @@ function StudentEnrollment() {
   // Modal states
   const [confirmModal, setConfirmModal] = useState({ show: false, title: '', message: '', onConfirm: null });
   const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', variant: 'success' });
+
+  // Pagination for available courses
+  const [coursesPage, setCoursesPage] = useState(1);
+  // Pagination for my enrollments
+  const [enrollmentsPage, setEnrollmentsPage] = useState(1);
+  const itemsPerPage = 10;
 
   const user = JSON.parse(sessionStorage.getItem('user'));
 
@@ -40,6 +47,12 @@ function StudentEnrollment() {
   const isEnrolled = (courseId) => {
     return enrollments.some(e => e.fld_course_id === courseId && e.fld_status === 'enrolled');
   };
+
+  const coursesTotalPages = Math.ceil(courses.length / itemsPerPage);
+  const paginatedCourses = courses.slice((coursesPage - 1) * itemsPerPage, coursesPage * itemsPerPage);
+
+  const enrollmentsTotalPages = Math.ceil(enrollments.length / itemsPerPage);
+  const paginatedEnrollments = enrollments.slice((enrollmentsPage - 1) * itemsPerPage, enrollmentsPage * itemsPerPage);
 
   const handleEnrollClick = (course) => {
     setConfirmModal({
@@ -82,6 +95,7 @@ function StudentEnrollment() {
             {loading ? (
               <p className="loadingText">Loading available courses...</p>
             ) : (
+              <>
               <table className="table">
                 <thead>
                   <tr>
@@ -93,7 +107,7 @@ function StudentEnrollment() {
                   </tr>
                 </thead>
                 <tbody>
-                  {courses.length > 0 ? courses.map(course => (
+                  {paginatedCourses.length > 0 ? paginatedCourses.map(course => (
                     <tr key={course.fld_course_id}>
                       <td>{course.fld_course_code}</td>
                       <td>{course.fld_course_name}</td>
@@ -122,6 +136,14 @@ function StudentEnrollment() {
                   )}
                 </tbody>
               </table>
+              <Pagination
+                currentPage={coursesPage}
+                totalPages={coursesTotalPages}
+                onPageChange={setCoursesPage}
+                totalItems={courses.length}
+                itemsPerPage={itemsPerPage}
+              />
+              </>
             )}
           </div>
 
@@ -139,7 +161,7 @@ function StudentEnrollment() {
                   </tr>
                 </thead>
                 <tbody>
-                  {enrollments.map(e => (
+                  {paginatedEnrollments.map(e => (
                     <tr key={e.fld_enrollment_id}>
                       <td>{e.fld_course_code}</td>
                       <td>{e.fld_course_name}</td>
@@ -150,6 +172,13 @@ function StudentEnrollment() {
                   ))}
                 </tbody>
               </table>
+              <Pagination
+                currentPage={enrollmentsPage}
+                totalPages={enrollmentsTotalPages}
+                onPageChange={setEnrollmentsPage}
+                totalItems={enrollments.length}
+                itemsPerPage={itemsPerPage}
+              />
             </div>
           )}
 

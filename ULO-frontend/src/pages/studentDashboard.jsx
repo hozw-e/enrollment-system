@@ -52,20 +52,10 @@ function StudentDashboard() {
           {/* Two Columns */}
           <div className="topRow">
 
-            {/* Left Column - Announcement */}
-            <div className="card">
-              <h2 className="cardTitle">Announcement</h2>
-              <hr className="cardDivider" />
-              <div className="emptyState">
-                <MdCampaign className="emptyIcon" />
-                <p>No announcements yet</p>
-              </div>
-            </div>
+            {/* Left Column - Enrollment Summary + Announcement */}
+            <div className="leftColumn">
 
-            {/* Right Column - Enrollment Summary */}
-            <div className="rightColumn">
-
-              <div className="card">
+              <div className="summaryCard">
                 <h2 className="cardTitle">Enrollment Summary</h2>
                 <div className="statsRow">
                   <div className="statBox">
@@ -83,9 +73,21 @@ function StudentDashboard() {
                 </div>
               </div>
 
-              {/* Current Enrollments */}
-              <div className="card">
-                <h2 className="cardTitle">Current Enrollments</h2>
+              <div className="announcementCard">
+                <h2 className="cardTitle">Announcement</h2>
+                <hr className="cardDivider" />
+                <div className="emptyState">
+                  <MdCampaign className="emptyIcon" />
+                  <p>No announcements yet</p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Column - Current Enrollments */}
+            <div className="card" style={{ flex: 1 }}>
+              <h2 className="cardTitle">Current Enrollments</h2>
+              <div className="tableWrapper">
                 {loading ? (
                   <p style={{ padding: '0.5rem' }}>Loading...</p>
                 ) : enrollments.filter(e => e.fld_status === 'enrolled').length > 0 ? (
@@ -113,8 +115,8 @@ function StudentDashboard() {
                   <p style={{ padding: '0.5rem', color: '#666' }}>No current enrollments</p>
                 )}
               </div>
-
             </div>
+
           </div>
 
         </div>

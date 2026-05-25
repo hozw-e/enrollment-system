@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import '../styles/adminRecords.css';
 import AdminSidebar from '../components/adminSidebar';
+import Pagination from '../components/Pagination';
 import { MdSearch } from 'react-icons/md';
 import { TbFilter } from 'react-icons/tb';
 import { getAdminStudents, getFullProfile } from '../utils/apiClient';
@@ -18,6 +19,10 @@ function AdminRecords() {
   const [filterProgram, setFilterProgram] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('name'); // name, college, program, year
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchStudents();
@@ -50,9 +55,9 @@ function AdminRecords() {
   };
 
   // Get unique colleges and programs for filter dropdowns
-  const colleges = useMemo(() => [...new Set(students.map(s => s.fld_college).filter(Boolean))].sort(), [students]);
+  const colleges = useMemo(() => [...new Set(students.map(s => s.fld_college_code).filter(Boolean))].sort(), [students]);
   const programs = useMemo(() => {
-    const list = students.filter(s => !filterCollege || s.fld_college === filterCollege).map(s => s.fld_program).filter(Boolean);
+    const list = students.filter(s => !filterCollege || s.fld_college_code === filterCollege).map(s => s.fld_program_code).filter(Boolean);
     return [...new Set(list)].sort();
   }, [students, filterCollege]);
 
@@ -64,26 +69,33 @@ function AdminRecords() {
         (s.fld_fname || '').toLowerCase().includes(term) ||
         (s.fld_lname || '').toLowerCase().includes(term) ||
         (s.fld_username || '').toLowerCase().includes(term) ||
-        (s.fld_college || '').toLowerCase().includes(term) ||
-        (s.fld_program || '').toLowerCase().includes(term)
+        (s.fld_college_code || '').toLowerCase().includes(term) ||
+        (s.fld_college_name || '').toLowerCase().includes(term) ||
+        (s.fld_program_code || '').toLowerCase().includes(term) ||
+        (s.fld_program_name || '').toLowerCase().includes(term)
       );
-      const matchesCollege = !filterCollege || s.fld_college === filterCollege;
-      const matchesProgram = !filterProgram || s.fld_program === filterProgram;
+      const matchesCollege = !filterCollege || s.fld_college_code === filterCollege;
+      const matchesProgram = !filterProgram || s.fld_program_code === filterProgram;
       return matchesSearch && matchesCollege && matchesProgram;
     });
 
     // Sort
     result.sort((a, b) => {
       switch (sortBy) {
-        case 'college': return (a.fld_college || '').localeCompare(b.fld_college || '');
-        case 'program': return (a.fld_program || '').localeCompare(b.fld_program || '');
-        case 'year': return (a.fld_year_level || '').localeCompare(b.fld_year_level || '');
+        case 'college': return (a.fld_college_code || '').localeCompare(b.fld_college_code || '');
+        case 'program': return (a.fld_program_code || '').localeCompare(b.fld_program_code || '');
         default: return (a.fld_lname || '').localeCompare(b.fld_lname || '');
       }
     });
 
     return result;
   }, [students, search, filterCollege, filterProgram, sortBy]);
+
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [search, filterCollege, filterProgram, sortBy]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedStudents = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="adminLayout">
@@ -138,7 +150,6 @@ function AdminRecords() {
                     <option value="name">Name</option>
                     <option value="college">College</option>
                     <option value="program">Program</option>
-                    <option value="year">Year Level</option>
                   </select>
                 </div>
                 <button className="adminClearFilterBtn" onClick={() => { setFilterCollege(''); setFilterProgram(''); setSortBy('name'); }}>
@@ -150,6 +161,7 @@ function AdminRecords() {
             {loading ? (
               <p style={{ padding: '1rem' }}>Loading students...</p>
             ) : (
+              <>
               <div className="adminTableWrapper">
                 <table className="adminTable">
                   <thead>
@@ -158,30 +170,36 @@ function AdminRecords() {
                       <th>Name</th>
                       <th>College</th>
                       <th>Program</th>
-                      <th>Year</th>
                       <th>Sex</th>
                       <th>Access</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.length > 0 ? filtered.map(student => (
+                    {paginatedStudents.length > 0 ? paginatedStudents.map(student => (
                       <tr key={student.fld_studnum} onClick={() => handleStudentClick(student)}>
                         <td>{student.fld_studnum}</td>
                         <td>{student.fld_fname} {student.fld_lname}</td>
-                        <td>{student.fld_college || 'N/A'}</td>
-                        <td>{student.fld_program || 'N/A'}</td>
-                        <td>{student.fld_year_level || 'N/A'}</td>
+                        <td>{student.fld_college_code || 'N/A'}</td>
+                        <td>{student.fld_program_code || 'N/A'}</td>
                         <td>{student.fld_sex || 'N/A'}</td>
                         <td>{student.fld_hasaccess === '1' ? 'Active' : 'Inactive'}</td>
                       </tr>
                     )) : (
                       <tr className="adminEmptyRow">
-                        <td colSpan={7}>No students found</td>
+                        <td colSpan={6}>No students found</td>
                       </tr>
                     )}
                   </tbody>
                 </table>
               </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filtered.length}
+                itemsPerPage={itemsPerPage}
+              />
+              </>
             )}
 
           </div>
@@ -208,6 +226,8 @@ function AdminRecords() {
                     <div><span>Name</span><strong>{studentProfile.personal?.fld_fname} {studentProfile.personal?.fld_mname || ''} {studentProfile.personal?.fld_lname} {studentProfile.personal?.fld_extname || ''}</strong></div>
                     <div><span>Date of Birth</span><strong>{studentProfile.personal?.fld_dob || 'N/A'}</strong></div>
                     <div><span>Sex</span><strong>{studentProfile.personal?.fld_sex || 'N/A'}</strong></div>
+                    <div><span>College</span><strong>{studentProfile.personal?.fld_college_name || 'N/A'} ({studentProfile.personal?.fld_college_code || ''})</strong></div>
+                    <div><span>Program</span><strong>{studentProfile.personal?.fld_program_name || 'N/A'} ({studentProfile.personal?.fld_program_code || ''})</strong></div>
                   </div>
                 </div>
 

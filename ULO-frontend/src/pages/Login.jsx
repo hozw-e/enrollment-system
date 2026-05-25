@@ -77,6 +77,7 @@ function Login() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="loginInput"
+              autoComplete="username"
               required
             />
           </div>
@@ -89,6 +90,7 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="loginInput"
+              autoComplete="current-password"
               required
             />
             <button

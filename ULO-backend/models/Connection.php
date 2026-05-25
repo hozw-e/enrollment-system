@@ -6,6 +6,8 @@ define("USER", $_ENV['USER']);
 define("PWORD", $_ENV['PWORD']);
 define("CHARSET", $_ENV['CHARSET']);
 define("SECRET_KEY", $_ENV['SECRET']);
+define("DB_SECRET_KEY", $_ENV['DB_SECRET']);
+define("LEGACY_KEY", $_ENV['LEGACY_SECRET'] ?? '');
 define("ALGO", $_ENV['ALGO']);
 
 class Connection {

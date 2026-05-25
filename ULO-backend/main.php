@@ -28,6 +28,7 @@
   $reports = new Reports($pdo);
   $students = new Students($pdo);
   $profile = new Profile($pdo);
+  $colleges = new Colleges($pdo);
   
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $param = array_values(array_filter(explode("/", $uri)));
@@ -41,7 +42,7 @@ $param = array_values(array_filter(explode("/", $uri)));
       $dt = json_decode($decrypted);
     } catch (Exception $e) {
       http_response_code(400);
-      echo json_encode(["error" => "Invalid encrypted data"]);
+      echo encryptData(["error" => "Invalid encrypted data"]);
       exit();
     }
   }
@@ -57,10 +58,10 @@ $param = array_values(array_filter(explode("/", $uri)));
         case 'auth':
           switch ($param[1] ?? '') {
             case 'register':
-              echo json_encode($auth->register($dt));
+              echo encryptData($auth->register($dt));
               break;
             case 'login':
-              echo $auth->login($dt);
+              echo encryptData($auth->login($dt));
               break;
             default:
               http_response_code(404);
@@ -72,7 +73,7 @@ $param = array_values(array_filter(explode("/", $uri)));
         case 'users':
           switch ($param[1] ?? '') {
             case 'profile':
-              echo $users->getUserProfile($dt);
+              echo encryptData($users->getUserProfile($dt));
               break;
             default:
               http_response_code(404);
@@ -111,10 +112,10 @@ $param = array_values(array_filter(explode("/", $uri)));
             $dt = is_string($dt) ? json_decode($dt) : $dt;
             if (!$dt) $dt = new stdClass();
             $dt->course_id = $param[1];
-            echo json_encode($courses->getCourseById($dt));
+            echo encryptData($courses->getCourseById($dt));
           } else {
             // GET /api/courses
-            echo json_encode($courses->getCourses());
+            echo encryptData($courses->getCourses());
           }
           break;
 
@@ -123,11 +124,11 @@ $param = array_values(array_filter(explode("/", $uri)));
           switch ($param[1] ?? '') {
             case 'student':
               // GET /api/enrollments/student/{student_id}
-              echo json_encode($enrollments->getEnrollmentsByStudent($dt));
+              echo encryptData($enrollments->getEnrollmentsByStudent($dt));
               break;
             case '':
               // POST /api/enrollments
-              echo json_encode($enrollments->enrollStudent($dt));
+              echo encryptData($enrollments->enrollStudent($dt));
               break;
             default:
               http_response_code(404);
@@ -139,10 +140,10 @@ $param = array_values(array_filter(explode("/", $uri)));
         case 'admin':
           switch ($param[1] ?? '') {
             case 'students':
-              echo json_encode($admin->getAllStudents());
+              echo encryptData($admin->getAllStudents());
               break;
             case 'courses':
-              echo json_encode($admin->getAllCourses());
+              echo encryptData($admin->getAllCourses());
               break;
             default:
               http_response_code(404);
@@ -150,14 +151,38 @@ $param = array_values(array_filter(explode("/", $uri)));
           }
           break;
 
+        // --- Colleges & Programs ---
+        case 'colleges':
+          if (isset($param[1]) && $param[1] === 'programs') {
+            // GET /colleges/programs?college_id=X
+            echo encryptData($colleges->getProgramsByCollege($dt));
+          } elseif (isset($param[1]) && $param[1] !== '') {
+            $dt = $dt ?? new stdClass();
+            $dt->college_id = $param[1];
+            echo encryptData($colleges->getCollegeById($dt));
+          } else {
+            echo encryptData($colleges->getColleges());
+          }
+          break;
+
+        case 'programs':
+          if (isset($param[1]) && $param[1] !== '') {
+            $dt = $dt ?? new stdClass();
+            $dt->program_id = $param[1];
+            echo encryptData($colleges->getProgramById($dt));
+          } else {
+            echo encryptData($colleges->getPrograms());
+          }
+          break;
+
         // --- Reports ---
         case 'reports':
           switch ($param[1] ?? '') {
             case 'enrollments':
-              echo json_encode($reports->getEnrollmentReport());
+              echo encryptData($reports->getEnrollmentReport());
               break;
             case 'course-popularity':
-              echo json_encode($reports->getCoursePopularity());
+              echo encryptData($reports->getCoursePopularity());
               break;
             default:
               http_response_code(404);
@@ -167,19 +192,19 @@ $param = array_values(array_filter(explode("/", $uri)));
 
         // --- Existing: Login / Change Password / Students ---
         case 'login':
-          echo json_encode($auth->login());
+          echo encryptData($auth->login());
           break;
 
         case 'changepassword':
-          echo json_encode($auth->changePassword($dt));
+          echo encryptData($auth->changePassword($dt));
           break;
       
         case 'students':
-          echo json_encode($students->getStudents());
+          echo encryptData($students->getStudents());
           break;
 
         case 'decryptdata':
-          echo $dt;
+          echo encryptData($dt);
           break;
       
         default:
@@ -192,7 +217,7 @@ $param = array_values(array_filter(explode("/", $uri)));
       switch ($param[0]) {
         // --- Create Course (admin) ---
         case 'courses':
-          echo json_encode($courses->createCourse($dt));
+          echo encryptData($courses->createCourse($dt));
           break;
 
         // --- Add Profile Entries ---
@@ -214,7 +239,7 @@ $param = array_values(array_filter(explode("/", $uri)));
           break;
 
         case 'students':
-          echo json_encode($students->insertStudent($dt));
+          echo encryptData($students->insertStudent($dt));
           break;
       
         default:
@@ -229,7 +254,7 @@ $param = array_values(array_filter(explode("/", $uri)));
         case 'users':
           switch ($param[1] ?? '') {
             case 'profile':
-              echo json_encode($users->updateUserProfile($dt));
+              echo encryptData($users->updateUserProfile($dt));
               break;
             default:
               http_response_code(404);
@@ -260,11 +285,11 @@ $param = array_values(array_filter(explode("/", $uri)));
 
         // --- Update Course (admin) ---
         case 'courses':
-          echo json_encode($courses->updateCourse($dt));
+          echo encryptData($courses->updateCourse($dt));
           break;
 
         case 'students':
-          echo json_encode($students->updateStudent($dt));
+          echo encryptData($students->updateStudent($dt));
           break;
       
         default:
@@ -276,20 +301,20 @@ $param = array_values(array_filter(explode("/", $uri)));
     case 'DELETE':
       switch ($param[0]) {
         case 'courses':
-          echo json_encode($courses->deleteCourse($dt));
+          echo encryptData($courses->deleteCourse($dt));
           break;
 
         // --- Delete Profile Entries ---
         case 'profile':
           switch ($param[1] ?? '') {
             case 'emergency':
-              echo json_encode($profile->deleteEmergencyContact($dt));
+              echo encryptData($profile->deleteEmergencyContact($dt));
               break;
             case 'family':
-              echo json_encode($profile->deleteFamilyMember($dt));
+              echo encryptData($profile->deleteFamilyMember($dt));
               break;
             case 'academic':
-              echo json_encode($profile->deleteAcademicRecord($dt));
+              echo encryptData($profile->deleteAcademicRecord($dt));
               break;
             default:
               http_response_code(404);
@@ -298,11 +323,11 @@ $param = array_values(array_filter(explode("/", $uri)));
           break;
 
         case 'students':
-          echo json_encode($students->archiveStudent($dt));
+          echo encryptData($students->archiveStudent($dt));
           break;
 
         case 'deletestudent':
-          echo json_encode($students->deleteStudent($dt));
+          echo encryptData($students->deleteStudent($dt));
           break;
       
         default:

@@ -1,0 +1,65 @@
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0 0;
+  margin-top: 12px;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.paginationInfo {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.paginationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.paginationBtn:hover:not(:disabled):not(.paginationActive) {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+.paginationBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginationActive {
+  background: #f5c842;
+  border-color: #f5c842;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.paginationNum {
+  font-size: 0.8rem;
+}
+
+.paginationEllipsis {
+  padding: 0 4px;
+  color: #999;
+  font-size: 0.8rem;
+}

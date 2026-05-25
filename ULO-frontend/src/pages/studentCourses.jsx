@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/studentCourses.css';
 import StudentSidebar from '../components/studentSidebar';
+import Pagination from '../components/Pagination';
 import { getCourses, getEnrollments } from '../utils/apiClient';
 
 const tabs = [
@@ -14,6 +15,10 @@ function StudentCourses() {
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const user = JSON.parse(sessionStorage.getItem('user'));
 
@@ -46,6 +51,12 @@ function StudentCourses() {
 
   const filtered = getFilteredData();
 
+  // Reset page when tab changes
+  useEffect(() => { setCurrentPage(1); }, [activeTab]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedData = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="layout">
       <StudentSidebar />
@@ -74,32 +85,39 @@ function StudentCourses() {
             {loading ? (
               <p className="loadingText">Loading courses...</p>
             ) : (
+              <>
               <table className="table">
                 <thead>
                   <tr>
                     <th>Course Code</th>
                     <th>Course Name</th>
                     <th>Units</th>
-                    {activeTab === 'all' && <th>Enrolled</th>}
                     {activeTab !== 'all' && <th>Status</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.length > 0 ? filtered.map((item, i) => (
+                  {paginatedData.length > 0 ? paginatedData.map((item, i) => (
                     <tr key={i}>
                       <td>{item.fld_course_code}</td>
                       <td>{item.fld_course_name}</td>
                       <td>{item.fld_units}</td>
-                      {activeTab === 'all' && <td>{item.enrolled_count}/{item.fld_max_students}</td>}
                       {activeTab !== 'all' && <td className={`status-${item.fld_status}`}>{item.fld_status}</td>}
                     </tr>
                   )) : (
                     <tr className="emptyRow">
-                      <td colSpan={4}>No courses found</td>
+                      <td colSpan={activeTab === 'all' ? 3 : 4}>No courses found</td>
                     </tr>
                   )}
                 </tbody>
               </table>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filtered.length}
+                itemsPerPage={itemsPerPage}
+              />
+              </>
             )}
           </div>
 
